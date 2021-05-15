@@ -1,0 +1,58 @@
+.dashboard {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+
+ .btn1{
+     margin: 10px !important;
+     border: none !important;
+     letter-spacing: 2px !important;
+     border-radius: 5px !important;
+ } 
+
+ .mediumBtn, .mediumBtn:focus{
+     background-color: green !important;
+ }
+
+ .diffBtn, .diffBtn:focus{
+    background-color: red !important; 
+ }
+
+ .btn1:hover{
+     background-color: white !important;
+     color: black !important;
+     border: 1px solid black !important;
+ }
+
+ h1{
+     color: white !important;
+ }
+
+ .info{
+    font-size: 40px;
+    text-align: center;
+    top: 30%;
+    left: 30%;
+    align-items: center;
+    justify-content: center;
+ }
+
+.boxes{
+    height: 200px;
+    width: 200px;
+    margin: auto;
+}
+
+ @media screen and (max-width: 440) {
+     .boxes{
+         width: 130px;
+         height: 130px;
+     }
+ }
