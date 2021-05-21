@@ -3,7 +3,7 @@ import Stack1 from '../components/Stack1';                   // Importing stack 
 import Stack2 from '../components/Stack2';                   // Importing stack 2
 import Stopwatch from '../components/StopWatch';             // Importing stopwatch
 import {useHistory} from 'react-router-dom';
-
+import axios from 'axios';
 
 export default function Home(props) {
     const history = useHistory()
@@ -14,7 +14,27 @@ export default function Home(props) {
     const [renderStack1, setRenderStack1] = useState(0);      // State to check that the card from stack 2 has been choosen
     const [score, setScore] = useState(0);                    // State to store the error Score 
     const [cardNo, setCardNo] = useState();                   // State to know the No. of cards on the deck
+    const [fileID, setfileID] = useState("");
+    const [stack1Cards, setstack1Cards] = useState([]);
+    const [stack2Cards, setstack2Cards] = useState([]);
 
+
+     // Function to receive all the cards via api and update it in setcards
+     useEffect(() => {
+        const url = `${window.apiHost}/api/start-game/${level}`;
+            axios.get(url).then(function(res){
+                console.log(res.data);
+
+                setstack1Cards(res.data.cards);
+                setstack2Cards(res.data.cards);
+
+                setfileID(res.data.uniqueId)
+            }).catch(function(err){
+                 console.log(err)
+            })
+    }, [level])
+
+   
 
     // Function to execute once to set the no. of cards initially
     useEffect(() => {
@@ -37,9 +57,10 @@ export default function Home(props) {
     // Callback function for stack 2 to update its status, No. of cards on deck, score  
     const callback2 = (value,s) => {
         
-        if(s===score){
-            setCardNo(cardNo-1)
+        if(value){
+            setCardNo(cardNo-1);  
         }
+
         setstack2Status(value);
         setScore(s)
 
@@ -53,53 +74,55 @@ export default function Home(props) {
     return (
         <div>
             <div className="row">
-                <div className="col l6 m6 s12">
-                   
-                    {/* Stopwatch Div */}
-                    <div className="row">
-                        <div className="col l3 m2"></div>
-                        <div className="col l6 m8 s12">
-                            <h4 style={{color: "white", border: "1px solid white", padding: 30, textAlign: "center"}}>Elapsed Time 
-                                <br/>
-                                <Stopwatch stop={cardNo}/>
-                            </h4>
+                    <div className="col l6 m6 s12">
+                    
+                        {/* Stopwatch Div */}
+                        <div className="row">
+                            <div className="col l3 m2"></div>
+                            <div className="col l6 m8 s12">
+                                <h4 style={{color: "white", border: "1px solid white", padding: 30, textAlign: "center"}}>Elapsed Time 
+                                    <br/>
+                                    <Stopwatch stop={cardNo}/>
+                                </h4>
+                            </div>
+                            <div className="col l3 m2"></div>
                         </div>
-                        <div className="col l3 m2"></div>
+                    </div>
+                    
+                    
+                    
+                    <div className="col l6 m6 s12">
+
+                        {/* Error Score Div */}
+                        <div className="row">
+                            <div className="col l3 m2"></div>
+                            <div className="col l6 m8 s12">
+                                <h4 style={{color: "white", border: "1px solid white", padding: 30, textAlign: "center"}}>Error Score 
+                                    <br/>
+                                <div style={{fontSize: '50px', marginTop: 20}}>{score}</div>
+                                
+                                </h4>
+                            </div>
+                            <div className="col l3 m2"></div>
+                        </div>
                     </div>
                 </div>
-                
-                
-                
-                <div className="col l6 m6 s12">
-
-                    {/* Error Score Div */}
-                    <div className="row">
-                        <div className="col l3 m2"></div>
-                        <div className="col l6 m8 s12">
-                            <h4 style={{color: "white", border: "1px solid white", padding: 30, textAlign: "center"}}>Error Score 
-                                <br/>
-                            <div style={{fontSize: '50px', marginTop: 20}}>{score}</div>
-                            
-                            </h4>
-                        </div>
-                        <div className="col l3 m2"></div>
-                    </div>
-                </div>
-            </div>
-
             {/* Condition to check if no. of cards in deck is 0 , then to show the congratualtions div else show the stacks */}
             {
-                cardNo ?
+                cardNo  && stack1Cards.length && stack2Cards.length ? 
+                <>
+                
                 <div className="row">
                     <div className="col s6" style={{borderRight: "1px solid white"}}>
-                        <Stack1 level={level} callback = {callback1} stack2Status={stack2Status} renderStack1 = {renderStack1} />
+                        <Stack1 stack1cards={stack1Cards} fileID={fileID} callback = {callback1} stack2Status={stack2Status} renderStack1={renderStack1}/>
                     </div>
                     <div className="col s6">
-                        <Stack2 level={level} callback = {callback2} stack1Status={stack1Status}/>
+                        <Stack2 stack2cards={stack2Cards} fileID={fileID} callback = {callback2} stack1Status={stack1Status}/>
                     </div>
                 </div>
+                </>
                 :
-                <h1 style={{textAlign: "center"}}>Congratulations !!</h1>
+                <h1 style={{textAlign: "center"}}>Game Over !!</h1>
             }
         </div>
     )

@@ -27,10 +27,11 @@ const writeFilePro = (file, data ) => {
 
 
 // Route to handle the stack 1 cards
-router.get('/stack-1/:id', async(req,res,next)=>{
+router.get('/stack-1/:file_id/:id', async(req,res,next)=>{
     try{
+        const fileId = req.params.file_id
         //Step-1:  To read the file_id.json
-        let data = await readFilePro('file_id.json');
+        let data = await readFilePro(`game/${fileId}.json`);
         
         //Step-2: Parsing the data to json
         data = JSON.parse(data)
@@ -42,7 +43,7 @@ router.get('/stack-1/:id', async(req,res,next)=>{
         let d1 = JSON.stringify(data);
         
         //Step-5: Writing the data to file_id.json 
-        await writeFilePro('file_id.json', d1);
+        await writeFilePro(`game/${fileId}.json`, d1);
 
         //Step-6: Sending the success response
         res.status(200).json({
@@ -58,14 +59,15 @@ router.get('/stack-1/:id', async(req,res,next)=>{
 
 
 // Route to handle the stack 2 cards
-router.get('/stack-2/:id', async(req,res,next)=>{
+router.get('/stack-2/:file_id/:id', async(req,res,next)=>{
     
     try{
+        const fileId = req.params.file_id
         // flag to say that cards of both stacks are not equal
         let flag = 0;
 
         //Step-1:  To read the file_id.json
-        let data = await readFilePro('file_id.json');
+        let data = await readFilePro(`game/${fileId}.json`);
         
         //Step-2: Parsing the data to json
         data = JSON.parse(data)
@@ -84,7 +86,7 @@ router.get('/stack-2/:id', async(req,res,next)=>{
         let d1 = JSON.stringify(data);
         
         //Step-6: Writing the data to file_id.json 
-        await writeFilePro('file_id.json', d1);
+        await writeFilePro(`game/${fileId}.json`, d1);
 
 
         //Step 7: if flag=1 (cards of both stack are equal) then sending response of pass status else sending fail status

@@ -35,12 +35,20 @@ router.get('/start-game/:level', (req,res,next)=>{
         cards[y] = x;
     }
 
+    const randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let fileName = '';
+    for ( var i = 0; i < 10; i++ ) {
+        fileName += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
+    }
+
+    console.log(fileName)
     // to initalize the file_id.json 
-    fs.writeFileSync('file_id.json', '{"id": [], "score": 0}', function(){console.log('done')})
+    fs.writeFileSync(`game/${req.params.level}_${fileName}.json`, '{"id": [], "score": 0}', function(){console.log('done')})
 
 
     res.status(200).json({
         status: "success",
+        uniqueId: `${req.params.level}_${fileName}`,
         cards
     })
 })
