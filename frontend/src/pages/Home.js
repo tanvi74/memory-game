@@ -3,7 +3,7 @@ import Stack1 from '../components/Stack1';                   // Importing stack 
 import Stack2 from '../components/Stack2';                   // Importing stack 2
 import Stopwatch from '../components/StopWatch';             // Importing stopwatch
 import {useHistory} from 'react-router-dom';
-import axios from 'axios';
+import axios from 'axios';  
 
 export default function Home(props) {
     const history = useHistory()
@@ -14,27 +14,18 @@ export default function Home(props) {
     const [renderStack1, setRenderStack1] = useState(0);      // State to check that the card from stack 2 has been choosen
     const [score, setScore] = useState(0);                    // State to store the error Score 
     const [cardNo, setCardNo] = useState();                   // State to know the No. of cards on the deck
-    const [fileID, setfileID] = useState("");
-    const [stack1Cards, setstack1Cards] = useState([]);
-    const [stack2Cards, setstack2Cards] = useState([]);
+    const [fileID, setfileID] = useState("");                 // State to save unique fileId
 
-
-     // Function to receive all the cards via api and update it in setcards
+     // Function to receive unique file id
      useEffect(() => {
         const url = `${window.apiHost}/api/start-game/${level}`;
             axios.get(url).then(function(res){
-                console.log(res.data);
-
-                setstack1Cards(res.data.cards);
-                setstack2Cards(res.data.cards);
-
                 setfileID(res.data.uniqueId)
             }).catch(function(err){
                  console.log(err)
             })
     }, [level])
 
-   
 
     // Function to execute once to set the no. of cards initially
     useEffect(() => {
@@ -82,7 +73,7 @@ export default function Home(props) {
                             <div className="col l6 m8 s12">
                                 <h4 style={{color: "white", border: "1px solid white", padding: 30, textAlign: "center"}}>Elapsed Time 
                                     <br/>
-                                    <Stopwatch stop={cardNo}/>
+                                    <Stopwatch stop={cardNo} fileID={fileID}/>
                                 </h4>
                             </div>
                             <div className="col l3 m2"></div>
@@ -109,17 +100,22 @@ export default function Home(props) {
                 </div>
             {/* Condition to check if no. of cards in deck is 0 , then to show the congratualtions div else show the stacks */}
             {
-                cardNo  && stack1Cards.length && stack2Cards.length ? 
+                cardNo ? 
                 <>
+                {
+                    fileID.length ? 
+                    <div className="row">
+                        <div className="col s6" style={{borderRight: "1px solid white"}}>
+                            <Stack1 fileID={fileID} callback = {callback1} stack2Status={stack2Status} renderStack1={renderStack1} level={level}/>
+                        </div>
+                        <div className="col s6">
+                            <Stack2  fileID={fileID} callback = {callback2} stack1Status={stack1Status} level={level}/>
+                        </div>
+                    </div>
+                    :
+                    <h1 style={{textAlign: "center"}}>Loading...</h1>
+                }
                 
-                <div className="row">
-                    <div className="col s6" style={{borderRight: "1px solid white"}}>
-                        <Stack1 stack1cards={stack1Cards} fileID={fileID} callback = {callback1} stack2Status={stack2Status} renderStack1={renderStack1}/>
-                    </div>
-                    <div className="col s6">
-                        <Stack2 stack2cards={stack2Cards} fileID={fileID} callback = {callback2} stack1Status={stack1Status}/>
-                    </div>
-                </div>
                 </>
                 :
                 <h1 style={{textAlign: "center"}}>Game Over !!</h1>

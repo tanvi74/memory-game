@@ -6,7 +6,8 @@ function MyStopwatch(props) {
     seconds,
     minutes,
     hours,
-    pause
+    pause,
+    reset
   } = useStopwatch({ autoStart: true });
 
   useEffect(() => {
@@ -14,6 +15,15 @@ function MyStopwatch(props) {
         pause();
     }
 },[props.stop])
+
+useEffect(()=>{
+  console.log(props.fileID)
+  if(props.fileID.length){
+    reset();
+  }else
+    pause()
+
+},[props.fileID])
 
 
   return (
@@ -29,7 +39,7 @@ export default function App(props) {
     
   return (
     <div>
-      <MyStopwatch stop={props.stop}/>
+      <MyStopwatch stop={props.stop} fileID={props.fileID}/>
     </div>
   );
 }

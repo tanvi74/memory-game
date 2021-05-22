@@ -13,6 +13,19 @@ const difficultFile = JSON.parse(fs.readFileSync(`${__dirname}/data/difficult.js
 const mediumFile = JSON.parse(fs.readFileSync(`${__dirname}/data/medium.json`, 'utf-8'));
 
 
+function shuffle(...cards) {
+    console.log("called")
+    for (var a = 0; a < cards.length; a++) {
+        var x = cards[a];
+        var y = Math.floor(Math.random() * (a + 1));
+        cards[a] = cards[y];
+        cards[y] = x;
+    }
+  
+    return cards;
+  }
+
+
 // router to start the game and to send the cards according to difficulty level and to initalize the file_id.json file
 router.get('/start-game/:level', (req,res,next)=>{
 
@@ -25,15 +38,19 @@ router.get('/start-game/:level', (req,res,next)=>{
         cards = difficultFile
     }
 
-    console.log(cards);
-
-    // Loop to shuffle the cards 
-    for (var a = 0; a < cards.length; a++) {
-        var x = cards[a];
-        var y = Math.floor(Math.random() * (a + 1));
-        cards[a] = cards[y];
-        cards[y] = x;
+    let stack1 = shuffle(...cards);
+    let stack2 = shuffle(...cards);
+  
+    let data = {
+        stack1,
+        stack2,
+        score:0,
+        id:[]
     }
+
+    console.log(data)
+    data= JSON.stringify(data)
+    
 
     const randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let fileName = '';
@@ -42,24 +59,23 @@ router.get('/start-game/:level', (req,res,next)=>{
     }
 
     console.log(fileName)
-    // to initalize the file_id.json 
-    fs.writeFileSync(`game/${req.params.level}_${fileName}.json`, '{"id": [], "score": 0}', function(){console.log('done')})
+    // to initalize the unique file_id in the game_data folder 
+    fs.writeFileSync(`game_data/${req.params.level}_${fileName}.json`, data, function(){console.log('done')})
 
 
     res.status(200).json({
         status: "success",
-        uniqueId: `${req.params.level}_${fileName}`,
-        cards
+        uniqueId: `${req.params.level}_${fileName}`
     })
 })
 
 
 
 // Route to send the score
-router.get('/score', (req,res,next)=>{
+router.get('/score/:fileId', (req,res,next)=>{
 
-    // To read the file_id.json  
-    const data = JSON.parse(fs.readFileSync(`file_id.json`, 'utf-8'));
+    // To read the unique file_id in the game_data folder  
+    const data = JSON.parse(fs.readFileSync(`game_data/${req.params.fileId}.json`, 'utf-8'));
 
     // to send the response
     res.status(200).json({
