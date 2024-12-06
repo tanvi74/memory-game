@@ -30,7 +30,9 @@ export default function Stack2(props) {
         if(active===0 && props.stack1Status===1){
         
             const url = `${window.apiHost}/api/play/stack-2/${fileId}/${key}`;
-            const resp = await axios.get(url);
+            const resp = await axios.get(url, {headers: {
+                "Access-Control-Allow-Origin": "*"
+            }});
 
            
             let c = cards;

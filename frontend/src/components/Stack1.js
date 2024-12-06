@@ -28,7 +28,9 @@ export default function Stack1(props) {
     const handleClick = async(key) => {
         if(active===0){
             const url = `${window.apiHost}/api/play/stack-1/${fileId}/${key}`;
-            const resp = await axios.get(url);
+            const resp = await axios.get(url, {headers: {
+                "Access-Control-Allow-Origin": "*"
+            }});
 
             let c = cards;
             c[key] = resp.data.number;

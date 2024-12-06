@@ -19,7 +19,9 @@ export default function Home(props) {
      // Function to receive unique file id
      useEffect(() => {
         const url = `${window.apiHost}/api/start-game/${level}`;
-            axios.get(url).then(function(res){
+            axios.get(url, {headers: {
+                "Access-Control-Allow-Origin": "*"
+            }}).then(function(res){
                 setfileID(res.data.uniqueId)
             }).catch(function(err){
                  console.log(err)
